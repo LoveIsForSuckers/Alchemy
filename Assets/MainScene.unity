@@ -365,10 +365,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1047875866}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b3792be79bce4c408b084c6a3574e4a, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ed8f09fdc41d064682b01b0d7ff6351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reagentPrefab: {fileID: 1169481610946752, guid: 85c729f0d3e4e204884ec5fd7c583abf,
+  reagentPrefab: {fileID: 1169481610946752, guid: ebfaabce102e2e94fab9bd1e2e23e4d8,
     type: 2}
   reagentContainer: {fileID: 1678373937}
   workTable: {fileID: 213873293}
@@ -513,7 +513,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.080287635, g: 0.17774113, b: 0.33088237, a: 0}
+  m_BackGroundColor: {r: 0.080287635, g: 0.17774113, b: 0.362, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0

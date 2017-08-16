@@ -48,8 +48,16 @@ public class ReactionController : MonoBehaviour
         if (reactionResultId != -1)
         {
             var libItem = _reagentLibrary.Reagents[reactionResultId];
-            makeReagentView(libItem, reagentContainer.transform);
             makeReagentView(libItem, workTable.transform);
+			
+			// TODO: store player progress instead
+			foreach (ReagentDisplay display in reagentContainer.GetComponentsInChildren<ReagentDisplay>())
+			{
+				if (display.Data.id == reactionResultId)
+					return;
+			}
+			
+			makeReagentView(libItem, reagentContainer.transform);
         }
     }
 
