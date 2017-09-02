@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Loader : MonoBehaviour
 {
     public const string SCENE_ID = "MainScene";
-    public const string API_URL = "";
+    public const string API_URL = "http://34.228.195.90/api/Library/Get";
 
     [SerializeField]
     private Texture2D _loadBarEmpty;
