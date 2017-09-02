@@ -8,16 +8,10 @@ public class ReactionController : MonoBehaviour
     public GameObject reagentPrefab;
     public Image reagentContainer;
     public Image workTable;
-
-    private ReactionsData _reactionsData;
-    private ReagentLibrary _reagentLibrary;
-
+    
 	void Awake ()
     {
-        _reagentLibrary = new ReagentLibrary();
-        _reactionsData = new ReactionsData();
-
-        var basicElements = _reagentLibrary.GetBasicElements();
+        var basicElements = Library.Instance.Reagents.GetBasicElements();
         foreach (ReagentLibItem libItem in basicElements)
         {
             makeReagentView(libItem, reagentContainer.transform);
@@ -42,12 +36,12 @@ public class ReactionController : MonoBehaviour
 
     private void tryCombineReagents(ReagentDisplay reagent1, ReagentDisplay reagent2)
     {
-        int reactionResultId = _reactionsData.GetReactionResultId(reagent1.Data.id, reagent2.Data.id);
+        int reactionResultId = Library.Instance.Reactions.GetReactionResultId(reagent1.Data.id, reagent2.Data.id);
         cleanupReaction(reagent1, reagent2);
 
         if (reactionResultId != -1)
         {
-            var libItem = _reagentLibrary.Reagents[reactionResultId];
+            var libItem = Library.Instance.Reagents.GetItem(reactionResultId);
             makeReagentView(libItem, workTable.transform);
 			
 			// TODO: store player progress instead

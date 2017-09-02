@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alchemy", "Alchemy.csproj", "{0ECF1607-8FB5-7218-7024-901678892CBD}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alchemy", "Assembly-CSharp.csproj", "{43787600-FB5B-F4FF-8A58-6208CF7129DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,12 +9,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0ECF1607-8FB5-7218-7024-901678892CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0ECF1607-8FB5-7218-7024-901678892CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0ECF1607-8FB5-7218-7024-901678892CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0ECF1607-8FB5-7218-7024-901678892CBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43787600-FB5B-F4FF-8A58-6208CF7129DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43787600-FB5B-F4FF-8A58-6208CF7129DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43787600-FB5B-F4FF-8A58-6208CF7129DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43787600-FB5B-F4FF-8A58-6208CF7129DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal

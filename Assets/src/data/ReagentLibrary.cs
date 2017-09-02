@@ -5,30 +5,38 @@ using System;
 
 public class ReagentLibrary
 {
-    private List<ReagentLibItem> _reagents;
+    // TODO: HACK
+    static private readonly int[] BASIC_ELEMENT_IDS = { 1, 2, 3, 8 };
+    
+    private Dictionary<int, ReagentLibItem> _dict;
 
-    public ReagentLibrary()
+    public ReagentLibrary(IEnumerable<ReagentLibItem> sourceList)
     {
-        loadList();
-    }
+        _dict = new Dictionary<int, ReagentLibItem>();
 
-    private void loadList()
-    {
-        TextAsset source = Resources.Load<TextAsset>("ReagentLibrary");
-        _reagents = JsonConvert.DeserializeObject<List<ReagentLibItem>>(source.text);
-        _reagents.Sort(new ReagentComparer());
+        foreach(ReagentLibItem item in sourceList)
+        {
+            _dict[item.id] = item;
+        }
     }
 
     public List<ReagentLibItem> GetBasicElements()
     {
         List<ReagentLibItem> result = new List<ReagentLibItem>();
-        result.AddRange(_reagents.GetRange(0, 4));
+        foreach (var id in BASIC_ELEMENT_IDS)
+        {
+            result.Add(_dict[id]);
+        }
         return result;
     }
 
-    public List<ReagentLibItem> Reagents
+    public ReagentLibItem GetItem(int id)
     {
-        get { return _reagents; }
+        ReagentLibItem result;
+        if (_dict.TryGetValue(id, out result))
+            return result;
+        else
+            return null;
     }
 }
 
