@@ -5,36 +5,61 @@ using UnityEngine.UI;
 
 public class ReactionController : MonoBehaviour
 {
-    public GameObject reagentPrefab;
-    public Image reagentContainer;
-    public Image workTable;
-    
+    [SerializeField]
+    private GameObject _reagentPrefab;
+    [SerializeField]
+    private Image _reagentContainer;
+    [SerializeField]
+    private Image _workTable;
+    [SerializeField]
+    private StatsDisplay _statsDisplay;
+
+    private const int WORK_TABLE_PADDING = 4;
+
+    private List<ReagentDisplay> _reagentsOnTable;
+    private List<ReagentDisplay> _reagentsOnPanel;
+
 	void Awake ()
     {
+        if (Library.Instance == null)
+        {
+            Debug.Log("[ReactionController] Library unavailable"); // TODO: mock data?
+            return;
+        }
+
         var basicElements = Library.Instance.Reagents.GetBasicElements();
         foreach (ReagentLibItem libItem in basicElements)
         {
-            makeReagentView(libItem, reagentContainer.transform);
+            makeReagentDisplay(libItem, _reagentContainer.transform);
         }
+
+        _reagentsOnTable = new List<ReagentDisplay>();
+        _reagentsOnPanel = new List<ReagentDisplay>(_reagentContainer.GetComponentsInChildren<ReagentDisplay>());
+
+        _statsDisplay.ReagentCount = _reagentsOnPanel.Count;
+        _statsDisplay.MaxReagentCount = Library.Instance.Reagents.Count;
 	}
 
-    public void OnReagentDropToTable()
+    public void OnReagentDropToTable(ReagentDisplay reagent)
     {
-        if (workTable.transform.childCount >= 2)
+        bool wasReaction = false;
+        foreach (var tableReagent in _reagentsOnTable)
         {
-            List<ReagentDisplay> displaysOnTable = new List<ReagentDisplay>();
-            workTable.GetComponentsInChildren<ReagentDisplay>(displaysOnTable);
-            if (displaysOnTable.Count < 2)
-                return;
-
-            // TODO: HACK-ish
-            ReagentDisplay reagent1 = displaysOnTable[0];
-            ReagentDisplay reagent2 = displaysOnTable[1];
-            tryCombineReagents(reagent1, reagent2);
+            if (reagent.RectTransform.IsIntersecting(tableReagent.RectTransform))
+            {
+                tryCombineReagents(reagent, tableReagent);
+                wasReaction = true;
+                break;
+            }
         }
+        
+        if (!wasReaction)
+            _reagentsOnTable.Add(reagent);
+
+        // TODO: SHOW PARTICLES
     }
 
-    private void tryCombineReagents(ReagentDisplay reagent1, ReagentDisplay reagent2)
+    private ReagentDisplay tryCombineReagents(ReagentDisplay reagent1, ReagentDisplay reagent2)
     {
         int reactionResultId = Library.Instance.Reactions.GetReactionResultId(reagent1.Data.id, reagent2.Data.id);
         cleanupReaction(reagent1, reagent2);
@@ -42,33 +67,60 @@ public class ReactionController : MonoBehaviour
         if (reactionResultId != -1)
         {
             var libItem = Library.Instance.Reagents.GetItem(reactionResultId);
-            makeReagentView(libItem, workTable.transform);
+            var targetPosition = Vector3.Lerp(reagent1.LocalPosition, reagent2.LocalPosition, 0.5f);
+            var reactionResult = makeReagentDisplay(libItem, _workTable.transform);
+            reactionResult.LocalPosition = targetPosition;
+            
+            _reagentsOnTable.Add(reactionResult);
+
+            _statsDisplay.TotalReactions++;
 			
 			// TODO: store player progress instead
-			foreach (ReagentDisplay display in reagentContainer.GetComponentsInChildren<ReagentDisplay>())
+			foreach (ReagentDisplay display in _reagentContainer.GetComponentsInChildren<ReagentDisplay>())
 			{
 				if (display.Data.id == reactionResultId)
-					return;
+                    return reactionResult;
 			}
 			
-			makeReagentView(libItem, reagentContainer.transform);
+		    _reagentsOnPanel.Add(makeReagentDisplay(libItem, _reagentContainer.transform));
+            _statsDisplay.ReagentCount++;
+
+            return reactionResult;
+        }
+        else
+        {
+            return null;
         }
     }
 
     private void cleanupReaction(ReagentDisplay reagent1, ReagentDisplay reagent2)
     {
+        _reagentsOnTable.Remove(reagent1);
+        _reagentsOnTable.Remove(reagent2);
+
         Destroy(reagent1.gameObject);
         Destroy(reagent2.gameObject);
     }
 
-    private void makeReagentView(ReagentLibItem libItem, Transform parent)
+    private ReagentDisplay makeReagentDisplay(ReagentLibItem libItem, Transform parent)
     {
-        GameObject reagentView = Instantiate<GameObject>(reagentPrefab);
+        GameObject reagentView = Instantiate<GameObject>(_reagentPrefab);
         reagentView.transform.SetParent(parent);
         reagentView.name = "RD " + libItem.title;
 
         ReagentDisplay reagentDisplay = reagentView.GetComponent<ReagentDisplay>();
         reagentDisplay.SetData(libItem);
         reagentDisplay.SetController(this);
+        return reagentDisplay;
+    }
+
+    public Image ReagentContainer
+    {
+        get { return _reagentContainer; }
+    }
+
+    public Image WorkTable
+    {
+        get { return _workTable; }
     }
 }

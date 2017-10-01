@@ -38,6 +38,11 @@ public class ReagentLibrary
         else
             return null;
     }
+
+    public int Count
+    {
+        get { return _dict.Count; }
+    }
 }
 
 public class ReagentComparer : IComparer<ReagentLibItem>

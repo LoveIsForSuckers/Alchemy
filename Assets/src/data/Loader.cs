@@ -16,7 +16,6 @@ public class Loader : MonoBehaviour
     private AsyncOperation _sceneLoader;
     private WWW _libraryLoader;
 
-    // IEnumerator so this becomes a coroutine thing
     IEnumerator Start ()
     {
         yield return loadLibrary();
@@ -28,7 +27,6 @@ public class Loader : MonoBehaviour
         // TODO: ADD OPTION TO LOAD LOCAL LIBRARY FROM FILE
         _libraryLoader = new WWW(API_URL);
         yield return _libraryLoader;
-        Debug.Log("Loaded library");
         new Library(_libraryLoader.text);
     }
 
@@ -36,6 +34,5 @@ public class Loader : MonoBehaviour
     {
         _sceneLoader = SceneManager.LoadSceneAsync(SCENE_ID);
         yield return _sceneLoader;
-        Debug.Log("Loaded scene");
     }
 }

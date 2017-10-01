@@ -3,7 +3,6 @@ using UnityEngine;
 
 static public class Color32Extensions
 {
-    /*
     static public int ToHexIntRGB(this Color32 color)
     {
         int result;
@@ -13,11 +12,11 @@ static public class Color32Extensions
 
         return result;
     }
-    */
 
-    /*
-    static public Color32 FromHexIntRGB(this Color32 color, int source)
+    static public Color32 FromHexIntRGB(int source)
     {
+        Color32 color = new Color32();
+
         color.r = (byte)((source >> 16) & 0xFF);
         color.g = (byte)((source >> 8) & 0xFF);
         color.b = (byte)((source) & 0xFF);
@@ -25,5 +24,4 @@ static public class Color32Extensions
 
         return color;
     }
-    */
 }

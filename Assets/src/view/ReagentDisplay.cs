@@ -8,15 +8,17 @@ public class ReagentDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 {
     private ReagentLibItem _data;
     private Image _image;
+    private LayoutElement _layout;
     private ReactionController _controller;
+
+    private Transform _currentParent;
+    private Vector2 _dragOffset;
+    private Vector3? _tempLocalPosition;
 
     void Start()
     {
+        _layout = GetComponent<LayoutElement>();
         _image = GetComponent<Image>();
-        if (_image == null)
-        {
-            Debug.LogWarning("[ReagentDisplay] Image not found on Start!");
-        }
 
         tryUpdateDisplay();
     }
@@ -38,12 +40,18 @@ public class ReagentDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         {
             _image.color = _data.color;
             _image.GetComponentInChildren<Text>().text = _data.title;
+
+            if (_tempLocalPosition != null)
+            {
+                _image.rectTransform.localPosition = _tempLocalPosition ?? default(Vector3);
+                _tempLocalPosition = null;
+            }
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (transform.parent == _controller.reagentContainer.transform)
+        if (transform.parent == _controller.ReagentContainer.transform)
         {
             var copy = Instantiate<GameObject>(gameObject, transform.parent, true);
             var copyDisplay = copy.GetComponent<ReagentDisplay>();
@@ -53,32 +61,31 @@ public class ReagentDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             copy.transform.SetSiblingIndex(transform.GetSiblingIndex());
         }
 
-        transform.SetParent(transform.parent.parent);
+        var thisTransform = transform;
+        _layout.ignoreLayout = true;
+        _currentParent = _controller.transform;
+        thisTransform.SetParent(_currentParent);
+        _dragOffset = new Vector2(thisTransform.position.x - eventData.pressPosition.x, thisTransform.position.y - eventData.pressPosition.y);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = eventData.position;
+        transform.position = eventData.position + _dragOffset;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, results);
+        _layout.ignoreLayout = false;
 
-        foreach (RaycastResult result in results)
+        if (RectTransform.IsFullyInside(_controller.WorkTable.rectTransform))
         {
-            if (result.gameObject == _controller.workTable.gameObject)
-            {
-                transform.SetParent(_controller.workTable.transform);
-                _controller.OnReagentDropToTable();
-                break;
-            }
-            else if (result.gameObject == _controller.reagentContainer.gameObject)
-            {
-                Destroy(gameObject);
-                break;
-            }
+            _currentParent = _controller.WorkTable.transform;
+            transform.SetParent(_currentParent);
+            _controller.OnReagentDropToTable(this);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -89,4 +96,23 @@ public class ReagentDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             return _data;
         }
     }
+
+    public RectTransform RectTransform
+    {
+        get { return _image ? _image.rectTransform : null; }
+    }
+
+    public Vector3 LocalPosition
+    {
+        get { return _image != null ? _image.rectTransform.localPosition : new Vector3(); }
+        set
+        {
+            if (_image != null)
+                _image.rectTransform.localPosition = value;
+            else
+                _tempLocalPosition = value;
+        }
+    }
+
+    
 }
